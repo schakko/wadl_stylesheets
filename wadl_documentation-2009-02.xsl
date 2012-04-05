@@ -458,7 +458,13 @@
             <h4 id="{$id}"><xsl:value-of select="@name"/></h4>
             <xsl:apply-templates select="wadl:doc"/>                
             <xsl:apply-templates select="wadl:request"/>
-            <xsl:apply-templates select="wadl:response"/>
+            
+            <xsl:if test="wadl:response">
+            	<p><em>method returns following HTTP resonse codes</em></p>
+            	<ul>
+           			<xsl:apply-templates select="wadl:response"/>
+           		</ul>
+           	</xsl:if>
         </div>
     </xsl:template>
 
@@ -480,22 +486,25 @@
     </xsl:template>
 
     <xsl:template match="wadl:response">
+    	<li>
         <xsl:apply-templates select="." mode="param-group">
             <xsl:with-param name="prefix">response</xsl:with-param>
             <xsl:with-param name="style">header</xsl:with-param>
-        </xsl:apply-templates> 
+        </xsl:apply-templates>
+        <strong> 
+	        <xsl:choose>
+	        	<xsl:when test="@status"><xsl:value-of select="@status" /></xsl:when>
+				<xsl:otherwise>200</xsl:otherwise>
+	    	</xsl:choose>
+	    </strong>
+        <xsl:apply-templates select="wadl:doc"/>
         <xsl:if test="wadl:representation">
             <p><em>available response representations:</em></p>
             <ul>
                 <xsl:apply-templates select="wadl:representation"/>
             </ul>
         </xsl:if>
-        <xsl:if test="wadl:fault">
-            <p><em>potential faults:</em></p>
-            <ul>
-                <xsl:apply-templates select="wadl:fault"/>
-            </ul>
-        </xsl:if>
+        </li>
     </xsl:template>
 
     <xsl:template match="wadl:representation|wadl:fault">
@@ -726,7 +735,7 @@
             <xsl:when test="wadl:doc[@title]">
                 <xsl:value-of select="wadl:doc[@title][1]/@title"/>
                 <xsl:if test="@status or @mediaType or @element"> (</xsl:if>
-                <xsl:if test="@status">Status Code </xsl:if><xsl:value-of select="@status"/>
+                <xsl:if test="@status">Status Code </xsl:if>
                 <xsl:if test="@status and @mediaType"> - </xsl:if>
                 <xsl:value-of select="@mediaType"/>
                 <xsl:if test="(@status or @mediaType) and @element"> - </xsl:if>
@@ -740,7 +749,7 @@
                 <xsl:if test="@status and @mediaType"> - </xsl:if>
                 <xsl:value-of select="@mediaType"/>
                 <xsl:if test="@element"> (</xsl:if>
-                <abbr title="{$expanded-name}"><xsl:value-of select="@element"/></abbr>
+                <abbr title="{$expanded-name}"><pre><xsl:value-of select="@element"/></pre></abbr>
                 <xsl:if test="@element">)</xsl:if>
             </xsl:otherwise>
         </xsl:choose>
