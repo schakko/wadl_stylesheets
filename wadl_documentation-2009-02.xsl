@@ -434,6 +434,10 @@
                     <xsl:apply-templates select="wadl:doc"/>
                     <xsl:apply-templates select="." mode="param-group">
                         <xsl:with-param name="prefix">resource-wide</xsl:with-param>
+                        <xsl:with-param name="style">query</xsl:with-param>
+                    </xsl:apply-templates>
+                    <xsl:apply-templates select="." mode="param-group">
+                        <xsl:with-param name="prefix">resource-wide</xsl:with-param>
                         <xsl:with-param name="style">template</xsl:with-param>
                     </xsl:apply-templates>
                     <xsl:apply-templates select="." mode="param-group">                        
